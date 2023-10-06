@@ -1,0 +1,42 @@
+-- not
+def not = \b . b false true
+--------------------------------------------
+-- resta
+-- resta n m = n - m 
+--
+-- resta n m = foldn m pred n
+def resta = \n m . m pred n 
+--------------------------------------------
+-- lt
+-- lt n m | true si n < m
+--        | false si n >= m
+--
+-- lt n m = not (is0 (m - n))
+def lt = \n m . not (is0 (resta m n))
+--------------------------------------------
+-- ite
+def ite = \x.x
+--------------------------------------------
+-- mod
+-- mod n m = n % m
+--
+-- mod n m | n == 0 = 0
+--         | n \= 0 = if (n < m) then n else (mod (n-m) m)
+--
+-- mod n m = ite (is0 n) n (ite (lt (n - m) 0) n (mod (n - m) m))
+def B = \f n m . ite (is0 n) n (ite (lt n m) n (f (resta n m) m))
+def mod = (Y B)
+--------------------------------------------
+-- divs
+--
+-- divs n = divs' n (n - 1)
+--      where
+--          divs' n 0 = Nil
+--          divs' n m = if ((n mod m) == 0)
+--                          then (CONS m (divs' n (m-1)))
+--                          else (divs' n (m-1))
+--
+-- divs' = \n m . ite (is0 m) nil (ite (is0 (mod n m)) (cons m (divs' n (pred m))) (divs' n (pred m)))
+-- 
+def C = \f n m . ite (is0 m) nil (ite (is0 (mod n m)) (cons m (f n (pred m))) (f n (pred m)))
+def divs = \n . (Y C) n (pred n)
